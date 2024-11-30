@@ -15,3 +15,12 @@ cidrips.exe <ips.txt >subnets.txt
 66.22.217.0/24
 66.22.216.0/24
 ```
+
+Arguments:
+
+```
+-c,--comma-separated        Use comma separated input and output.
+-l,--line-separated         Use line separated input and output.
+--cidr=<n>                  Use CIDR 0.0.0.0/<n>
+--help
+```
