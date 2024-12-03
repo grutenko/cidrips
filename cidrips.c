@@ -215,9 +215,9 @@ static void _make_expected_error(int expected, int actual) {
   p += rc;
   for (i = 0; i < _toklist_size; i++) {
     if (expected & _toklist[i]) {
-      strcpy_s(p, 255, tokname(_toklist[i]));
-      p += strnlen(tokname(_toklist[i]), 255);
-      strcpy_s(p, 255, " or ");
+      strcpy(p, tokname(_toklist[i]));
+      p += strlen(tokname(_toklist[i]));
+      strcpy(p, " or ");
       p += 4;
     }
   }
@@ -283,7 +283,7 @@ __parse_next_token_label:
 
   lex(input);
   if (_lexerr) {
-    strcpy_s(_parseerr, 255, "Buffer overflow error.");
+    strcpy(_parseerr, "Buffer overflow error.");
     return 0;
   }
   // Read next token and check its expected for current state
@@ -508,53 +508,52 @@ __invalidaddrblock:
 
 enum { v6_PRINT_LEFT = 0, v6_PRINT_RIGHT };
 
-static int s_print_v6_block_part(char *buffer, int count, const u16 *addr,
+static int s_print_v6_block_part(char *buffer, const u16 *addr,
                                  int blocks, int mode) {
   int n = 0;
   switch (blocks) {
   case 0:
     break;
   case 1:
-    n = sprintf_s(buffer, count, "%x", addr[(8 - blocks) * mode + 0]);
+    n = sprintf(buffer, "%x", addr[(8 - blocks) * mode + 0]);
     break;
   case 2:
-    n = sprintf_s(buffer, count, "%x:%x", addr[(8 - blocks) * mode + 0],
-                  addr[(8 - blocks) * mode + 1]);
+    n = sprintf(buffer, "%x:%x", addr[(8 - blocks) * mode + 0],
+                addr[(8 - blocks) * mode + 1]);
     break;
   case 3:
-    n = sprintf_s(buffer, count, "%x:%x:%x", addr[(8 - blocks) * mode + 0],
-                  addr[(8 - blocks) * mode + 1], addr[(8 - blocks) * mode + 2]);
+    n = sprintf(buffer, "%x:%x:%x", addr[(8 - blocks) * mode + 0],
+                addr[(8 - blocks) * mode + 1], addr[(8 - blocks) * mode + 2]);
     break;
   case 4:
-    n = sprintf_s(buffer, count, "%x:%x:%x:%x", addr[(8 - blocks) * mode + 0],
-                  addr[(8 - blocks) * mode + 1], addr[(8 - blocks) * mode + 2],
-                  addr[(8 - blocks) * mode + 3]);
+    n = sprintf(buffer, "%x:%x:%x:%x", addr[(8 - blocks) * mode + 0],
+                addr[(8 - blocks) * mode + 1], addr[(8 - blocks) * mode + 2],
+                addr[(8 - blocks) * mode + 3]);
     break;
   case 5:
-    n = sprintf_s(buffer, count, "%x:%x:%x:%x:%x",
-                  addr[(8 - blocks) * mode + 0], addr[(8 - blocks) * mode + 1],
-                  addr[(8 - blocks) * mode + 2], addr[(8 - blocks) * mode + 3],
-                  addr[(8 - blocks) * mode + 4]);
+    n = sprintf(buffer, "%x:%x:%x:%x:%x", addr[(8 - blocks) * mode + 0],
+                addr[(8 - blocks) * mode + 1], addr[(8 - blocks) * mode + 2],
+                addr[(8 - blocks) * mode + 3], addr[(8 - blocks) * mode + 4]);
     break;
   case 6:
-    n = sprintf_s(buffer, count, "%x:%x:%x:%x:%x:%x",
-                  addr[(8 - blocks) * mode + 0], addr[(8 - blocks) * mode + 1],
-                  addr[(8 - blocks) * mode + 2], addr[(8 - blocks) * mode + 3],
-                  addr[(8 - blocks) * mode + 4], addr[(8 - blocks) * mode + 5]);
+    n = sprintf(buffer, "%x:%x:%x:%x:%x:%x",
+                addr[(8 - blocks) * mode + 0], addr[(8 - blocks) * mode + 1],
+                addr[(8 - blocks) * mode + 2], addr[(8 - blocks) * mode + 3],
+                addr[(8 - blocks) * mode + 4], addr[(8 - blocks) * mode + 5]);
     break;
   case 7:
-    n = sprintf_s(buffer, count, "%x:%x:%x:%x:%x:%x:%x",
-                  addr[(8 - blocks) * mode + 0], addr[(8 - blocks) * mode + 1],
-                  addr[(8 - blocks) * mode + 2], addr[(8 - blocks) * mode + 3],
-                  addr[(8 - blocks) * mode + 4], addr[(8 - blocks) * mode + 5],
-                  addr[(8 - blocks) * mode + 6]);
+    n = sprintf(buffer, "%x:%x:%x:%x:%x:%x:%x",
+                addr[(8 - blocks) * mode + 0], addr[(8 - blocks) * mode + 1],
+                addr[(8 - blocks) * mode + 2], addr[(8 - blocks) * mode + 3],
+                addr[(8 - blocks) * mode + 4], addr[(8 - blocks) * mode + 5],
+                addr[(8 - blocks) * mode + 6]);
     break;
   case 8:
-    n = sprintf_s(buffer, count, "%x:%x:%x:%x:%x:%x:%x:%x",
-                  addr[(8 - blocks) * mode + 0], addr[(8 - blocks) * mode + 1],
-                  addr[(8 - blocks) * mode + 2], addr[(8 - blocks) * mode + 3],
-                  addr[(8 - blocks) * mode + 4], addr[(8 - blocks) * mode + 5],
-                  addr[(8 - blocks) * mode + 6], addr[(8 - blocks) * mode + 7]);
+    n = sprintf(buffer, "%x:%x:%x:%x:%x:%x:%x:%x",
+                addr[(8 - blocks) * mode + 0], addr[(8 - blocks) * mode + 1],
+                addr[(8 - blocks) * mode + 2], addr[(8 - blocks) * mode + 3],
+                addr[(8 - blocks) * mode + 4], addr[(8 - blocks) * mode + 5],
+                addr[(8 - blocks) * mode + 6], addr[(8 - blocks) * mode + 7]);
     break;
   }
   return n;
@@ -574,14 +573,14 @@ static int s_print_addr(char *buffer, int count, struct _addr *addr, int mode) {
   char *bufp = buffer;
 
   if (addr->ver == _ADDR_IPV4) {
-    i = sprintf_s(buffer, count, "%u.%u.%u.%u", addr->v.v4[0], addr->v.v4[1],
-                  addr->v.v4[2], addr->v.v4[3]);
+    i = sprintf(buffer, "%u.%u.%u.%u", addr->v.v4[0], addr->v.v4[1],
+                addr->v.v4[2], addr->v.v4[3]);
     bufp += i;
     if (i < 0) {
       return 1;
     }
     if (addr->cidr < 32) {
-      i = sprintf_s(bufp, count - (bufp - buffer), "/%u", addr->cidr);
+      i = sprintf(bufp, "/%u", addr->cidr);
       if (i < 0) {
         return 1;
       }
@@ -606,7 +605,7 @@ static int s_print_addr(char *buffer, int count, struct _addr *addr, int mode) {
     }
 
     if (zero_block_max_num > 0) {
-      i = s_print_v6_block_part(buffer, count, addr->v.v6, zero_block_max_begin,
+      i = s_print_v6_block_part(buffer, addr->v.v6, zero_block_max_begin,
                                 v6_PRINT_LEFT);
 
       if (i < 0) {
@@ -618,14 +617,14 @@ static int s_print_addr(char *buffer, int count, struct _addr *addr, int mode) {
       *bufp = 0;
 
       i = s_print_v6_block_part(
-          bufp, count, addr->v.v6,
+          bufp, addr->v.v6,
           8 - (zero_block_max_begin + zero_block_max_num + 1), v6_PRINT_RIGHT);
       if (i < 0) {
         return 1;
       }
       bufp += i;
       if (addr->cidr < 128) {
-        i = sprintf_s(bufp, count - (bufp - buffer), "/%u", addr->cidr);
+        i = sprintf(bufp, "/%u", addr->cidr);
         if (i < 0) {
           return 1;
         }
@@ -634,12 +633,12 @@ static int s_print_addr(char *buffer, int count, struct _addr *addr, int mode) {
     }
   }
 
-  sprintf_s(buffer, count, "%x:%x:%x:%x:%x:%x:%x:%x", addr->v.v6[0],
-            addr->v.v6[1], addr->v.v6[2], addr->v.v6[3], addr->v.v6[4],
-            addr->v.v6[5], addr->v.v6[6], addr->v.v6[7]);
+  sprintf(buffer, "%x:%x:%x:%x:%x:%x:%x:%x", addr->v.v6[0], addr->v.v6[1],
+          addr->v.v6[2], addr->v.v6[3], addr->v.v6[4], addr->v.v6[5],
+          addr->v.v6[6], addr->v.v6[7]);
 
   if (addr->cidr < 128) {
-    sprintf_s(bufp, count - (bufp - buffer), "/%u", addr->cidr);
+    sprintf(bufp, "/%u", addr->cidr);
   }
   return 0;
 }
@@ -664,12 +663,13 @@ static struct _args {
   int outmode;
   int quality;
   int help;
+  int skip_single;
 } _args;
 
 static int strpos(const char *haystack, const char *needle) {
   char *p;
   p = strstr(haystack, needle);
-  if(p) {
+  if (p) {
     return p - haystack;
   }
   return -1;
@@ -679,26 +679,28 @@ static void parse_args(int argc, char **argv, struct _args *args) {
   int i;
   int rc;
   char *p;
-  for(i = 1; i < argc; i++) {
-    if(strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--line") == 0) {
+  for (i = 1; i < argc; i++) {
+    if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--line") == 0) {
       args->outmode = 0;
 
-    } else if(strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--comma") == 0) {
-      args->outmode = 0;
+    } else if (strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--comma") == 0) {
+      args->outmode = 1;
 
-    } else if(strpos(argv[i], "-q=") == 0) {
-      rc = sscanf_s(argv[i], "-q=%d", &(args->quality));
-      if(rc != 1 || args->quality < 0 || args->quality > 32) {
+    } else if (strpos(argv[i], "-q=") == 0) {
+      rc = sscanf(argv[i], "-q=%d", &(args->quality));
+      if (rc != 1 || args->quality < 0 || args->quality > 32) {
         fprintf(stderr, "Invalid argument: --quality\n");
         exit(EXIT_FAILURE);
       }
-    } else if(strpos(argv[i], "--quality=") == 0) {
-      rc = sscanf_s(argv[i], "--quality=%d", &(args->quality));
-      if(rc != 1 || args->quality < 0 || args->quality > 32) {
+    } else if(strcmp(argv[i], "--skipsingle") == 0) {
+      args->skip_single = 1;
+    } else if (strpos(argv[i], "--quality=") == 0) {
+      rc = sscanf(argv[i], "--quality=%d", &(args->quality));
+      if (rc != 1 || args->quality < 0 || args->quality > 32) {
         fprintf(stderr, "Invalid argument: --quality\n");
         exit(EXIT_FAILURE);
       }
-    } else if(strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
+    } else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
       args->help = 1;
     } else {
       fprintf(stderr, "Invalid argument: %s\n", argv[i]);
@@ -773,7 +775,7 @@ static void addrlist_delete(struct _addrlist **head, struct _addrlist **tail,
 
 static void addrlist_free(struct _addrlist **head, struct _addrlist **tail) {
   struct _addrlist *p = *head, *pp;
-  while(p) {
+  while (p) {
     pp = p;
     p = p->next;
     free(p);
@@ -841,9 +843,10 @@ int main(int argc, char **argv) {
   _args.help = 0;
   _args.outmode = 0;
   _args.quality = 0;
+  _args.skip_single = 0;
   parse_args(argc, argv, &_args);
 
-  if(_args.help) {
+  if (_args.help) {
     show_help(stdout);
     return EXIT_SUCCESS;
   }
@@ -907,7 +910,7 @@ int main(int argc, char **argv) {
       }
 
       // remove
-      if (_group_count >= _limit_quality) {
+      if (_group_count >= _limit_quality && (_group_count > 1 || !_args.skip_single)) {
         for (_group_i = 1; _group_i < _group_size(); _group_i++) {
           addrlist_delete(&_head_v4, &_tail_v4, _group[_group_i]);
         }
@@ -933,12 +936,13 @@ int main(int argc, char **argv) {
     printf("%s", buffer);
     p = p->next;
     if (p) {
-      if(_args.outmode == 0) {
+      if (_args.outmode == 0) {
         printf("\n");
       } else {
         printf(", ");
       }
     }
+    fflush(stdout);
   }
 
   addrlist_free(&_head_v4, &_tail_v4);

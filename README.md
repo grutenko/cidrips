@@ -1,7 +1,8 @@
 ## cidrips
 
 Utlity for group list of ips by subnets
-Usage:
+
+### Usage:
 
 ```bat
 cidrips.exe -q=5 <ips.txt >subnets.txt
@@ -18,7 +19,7 @@ cidrips.exe -q=5 <ips.txt >subnets.txt
 66.22.217.128/28
 ```
 
-Arguments:
+### Arguments:
 
 ```
 usage: cdrips.exe [options]
@@ -28,4 +29,11 @@ usage: cdrips.exe [options]
                 -q,  --quality=[n]     Quality of finding subnets. From 0 - find subnets
                                        cover all transmitted addresses, 1 - 50%, 2 - 25%, etc...
                 -h,  --help            Show help.
+```
+
+### Build
+windows
+
+```bat
+clang cidrips.c -ocidrips.exe
 ```
