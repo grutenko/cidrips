@@ -4,7 +4,7 @@ Utlity for group list of ips by subnets
 Usage:
 
 ```bat
-cidrips.exe <ips.txt >subnets.txt
+cidrips.exe -q=5 <ips.txt >subnets.txt
 ```
 ```
 #  ips.txt
@@ -12,15 +12,20 @@ cidrips.exe <ips.txt >subnets.txt
 ```
 ```
 # subnets.txt
-66.22.217.0/24
 66.22.216.0/24
+66.22.217.8/29
+66.22.217.96/27
+66.22.217.128/28
 ```
 
 Arguments:
 
 ```
--c,--comma-separated        Use comma separated input and output.
--l,--line-separated         Use line separated input and output.
---cidr=<n>                  Use CIDR 0.0.0.0/<n>
---help
+usage: cdrips.exe [options]
+        options:
+                -l,  --line            Row-separated output.
+                -c,  --comma           Comma-separated output.
+                -q,  --quality=[n]     Quality of finding subnets. From 0 - find subnets
+                                       cover all transmitted addresses, 1 - 50%, 2 - 25%, etc...
+                -h,  --help            Show help.
 ```

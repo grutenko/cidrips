@@ -663,10 +663,49 @@ static int subnode_weight_v6(int cidr) {}
 static struct _args {
   int outmode;
   int quality;
-  int cidr;
+  int help;
 } _args;
 
-static int parse_args(int argc, const char **argv, struct _args *args) {}
+static int strpos(const char *haystack, const char *needle) {
+  char *p;
+  p = strstr(haystack, needle);
+  if(p) {
+    return p - haystack;
+  }
+  return -1;
+}
+
+static void parse_args(int argc, char **argv, struct _args *args) {
+  int i;
+  int rc;
+  char *p;
+  for(i = 1; i < argc; i++) {
+    if(strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--line") == 0) {
+      args->outmode = 0;
+
+    } else if(strcmp(argv[i], "-c") == 0 || strcmp(argv[i], "--comma") == 0) {
+      args->outmode = 0;
+
+    } else if(strpos(argv[i], "-q=") == 0) {
+      rc = sscanf_s(argv[i], "-q=%d", &(args->quality));
+      if(rc != 1 || args->quality < 0 || args->quality > 32) {
+        fprintf(stderr, "Invalid argument: --quality\n");
+        exit(EXIT_FAILURE);
+      }
+    } else if(strpos(argv[i], "--quality=") == 0) {
+      rc = sscanf_s(argv[i], "--quality=%d", &(args->quality));
+      if(rc != 1 || args->quality < 0 || args->quality > 32) {
+        fprintf(stderr, "Invalid argument: --quality\n");
+        exit(EXIT_FAILURE);
+      }
+    } else if(strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
+      args->help = 1;
+    } else {
+      fprintf(stderr, "Invalid argument: %s\n", argv[i]);
+      exit(EXIT_FAILURE);
+    }
+  }
+}
 
 static void show_help(FILE *stream) {
   fprintf(stream, "usage: cdrips.exe [options]\n");
@@ -732,6 +771,21 @@ static void addrlist_delete(struct _addrlist **head, struct _addrlist **tail,
   }
 }
 
+static void addrlist_free(struct _addrlist **head, struct _addrlist **tail) {
+  struct _addrlist *p = *head, *pp;
+  while(p) {
+    pp = p;
+    p = p->next;
+    free(p);
+  }
+  *head = 0;
+  *tail = 0;
+}
+
+static void addrlist_free_deleted() {
+  addrlist_free(&_head_deleted, &_tail_deleted);
+}
+
 #if !defined(TEST) || TEST != 1
 
 #define REALLOC_STEP 128
@@ -773,10 +827,8 @@ int _group_push(struct _addrlist *value) {
   return !!_t;
 }
 
-#define QUALITY 0
-
 static inline u32 rshift(u32 v, int i) {
-  while (--i)
+  while (i--)
     v >>= 1;
   return v;
 }
@@ -786,6 +838,15 @@ int main(int argc, char **argv) {
   int rc;
   int i;
   char buffer[256];
+  _args.help = 0;
+  _args.outmode = 0;
+  _args.quality = 0;
+  parse_args(argc, argv, &_args);
+
+  if(_args.help) {
+    show_help(stdout);
+    return EXIT_SUCCESS;
+  }
 
   while (1) {
     rc = parse(stdin, &addr);
@@ -814,7 +875,7 @@ int main(int argc, char **argv) {
   for (i = 31; i > 0; i--) {
     _weight = subnode_weight(i);
     _mask = mask_v4(i);
-    _limit_quality = rshift(_weight, QUALITY);
+    _limit_quality = rshift(_weight, _args.quality);
     p = _head_v4;
 
     while (p) {
@@ -871,13 +932,26 @@ int main(int argc, char **argv) {
     s_print_addr(buffer, 255, &(p->subnode), ADDR_PRINT_COMPACT);
     printf("%s", buffer);
     p = p->next;
-    if(p) {
-      printf(", ");
+    if (p) {
+      if(_args.outmode == 0) {
+        printf("\n");
+      } else {
+        printf(", ");
+      }
     }
   }
 
+  addrlist_free(&_head_v4, &_tail_v4);
+  addrlist_free(&_head_v6, &_tail_v6);
+  addrlist_free_deleted();
+  free(_group);
+
   return EXIT_SUCCESS;
 __memory_error:
+  addrlist_free(&_head_v4, &_tail_v4);
+  addrlist_free(&_head_v6, &_tail_v6);
+  addrlist_free_deleted();
+  free(_group);
   fprintf(stderr, "Cannot allocate memory.\n");
   return EXIT_FAILURE;
 }
