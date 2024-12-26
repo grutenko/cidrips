@@ -692,7 +692,7 @@ static void parse_args(int argc, char **argv, struct _args *args) {
         fprintf(stderr, "Invalid argument: --quality\n");
         exit(EXIT_FAILURE);
       }
-    } else if(strcmp(argv[i], "--skipsingle") == 0) {
+    } else if(strcmp(argv[i], "-S") == 0 || strcmp(argv[i], "--skip-single") == 0) {
       args->skip_single = 1;
     } else if (strpos(argv[i], "--quality=") == 0) {
       rc = sscanf(argv[i], "--quality=%d", &(args->quality));
@@ -718,6 +718,7 @@ static void show_help(FILE *stream) {
                   "0 - find subnets\n");
   fprintf(stream, "\t\t                       cover all transmitted addresses, "
                   "1 - 50%%, 2 - 25%%, etc...\n");
+  fprintf(stream, "\t\t-S, --skip-single      Not cover subnets with one address\n");
   fprintf(stream, "\t\t-h,  --help            Show help.\n");
 }
 
