@@ -28,6 +28,7 @@ usage: cdrips.exe [options]
                 -c,  --comma           Comma-separated output.
                 -q,  --quality=[n]     Quality of finding subnets. From 0 - find subnets
                                        cover all transmitted addresses, 1 - 50%, 2 - 25%, etc...
+                -S, --skip-single      Skip mask for sign ip in group
                 -h,  --help            Show help.
 ```
 
