@@ -1,0 +1,3 @@
+BasedOnStyle: LLVM
+AlignArrayOfStructures: AIAS_Right
+AlignAfterOpenBracket: BAS_BlockIndent

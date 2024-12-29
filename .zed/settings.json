@@ -1,0 +1,6 @@
+{
+  "file_types": {
+    "CMake": ["CMakeLists.txt", "*.cmake"],
+    "C": ["*.lex", "*.c"]
+  }
+}

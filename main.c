@@ -644,17 +644,11 @@ static int s_print_addr(char *buffer, int count, struct _addr *addr, int mode) {
 }
 
 static inline u32 mask_v4(int cidr) {
-  u32 r = 0xffffffff;
-  while (32 - (cidr++))
-    r <<= 1;
-  return r;
+  return 0xffffffff << (32 - cidr);
 }
 
 static int subnode_weight(int cidr) {
-  u32 r = 1;
-  while (32 - (cidr++))
-    r <<= 1;
-  return r;
+  return 1 << (32 - cidr);
 }
 
 static int subnode_weight_v6(int cidr) {}
@@ -831,9 +825,7 @@ int _group_push(struct _addrlist *value) {
 }
 
 static inline u32 rshift(u32 v, int i) {
-  while (i--)
-    v >>= 1;
-  return v;
+  return v >> i;
 }
 
 int main(int argc, char **argv) {
