@@ -1,6 +1,0 @@
-#define cidrips_version_major @cidrips_VERSION_MAJOR@
-#define cidrips_version_minor @cidrips_VERSION_MINOR@
-#define cidrips_version_patch @cidrips_VERSION_PATCH@
-#define cidrips_git_rev "@GIT_REV@"
-#define cidrips_git_tag "@GIT_TAG@"
-#define cidrips_git_branch "@GIT_BRANCH@"
