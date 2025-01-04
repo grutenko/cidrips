@@ -1,62 +1,67 @@
 ## cidrips
 
-[![en](https://img.shields.io/badge/lang-en-red.svg)](ttps://github.com/grutenko/cidrips/blob/master/README.md)
-[![ru](https://img.shields.io/badge/lang-ru-green.svg)](https://github.com/grutenko/cidrips/blob/master/README.ru.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](ttps://github.com/grutenko/cidrips/blob/master/README.en.md)
+[![ru](https://img.shields.io/badge/lang-ru-green.svg)](https://github.com/grutenko/cidrips/blob/master/README.md)
 
-Utlity for group list of ips by subnets
+_Утилита сжатия списка IP адресов с исползованием группировки по CIDR маске_
 
-### Usage:
+### Как использовать
+
+Утилита может работать в двух режимах:
+
+1. --mode=level - Группирует так, чтобы любая маска результа содержала не менее $weight(cidr) / 2^{level}$ исходных адресов. То есть для --level = 0 : $weight(cidr) / 2^0 = weight(cidr) = 100\%$ адресов
+2. --mode=count - Находит наиболее подходящее значение level чтобы резальтат содержал не более count адресов
+
+Вне зависимости от выбраного режима проводится некоторая предварительная работа с адресами:
+
+1. Удаляются дублирующие адреса
+2. удаляются адреса и так входящие в одну из масок: 127.0.0.0/31, 127.0.0.1 => 127.0.0.0/31
+3. Результат сортируется по возрастанию чисел в адресе.
+
+#### Основные опции
+
+1. -i,--input - входной поток. Путь к файлу или "-" для чтения из входного потока
+2. -o,--out - выходной поток.  Путь к файлу или "-" для чтения из входного потока
+3. -m,--mode - режим работы. "level" или "count"
+4. -l,--level - уровень сжатия (для --mode=level)
+5. -c,--count - максимальное количество в результате (для --mode=count)
+
+#### Другие опции
+
+1. --overwrite, --append, --cancel - что делать в случае если выходной файл существует и не пуст. Если один из этих параметров отсутсвует будет задан соответствующий вопрос
+2. --no-stats - не выводить статистику в выходной поток
+3. --prefix - добавить эту строку перед каждый выходным адресом (доступны \t\r\n как управляющие последовательности)
+4. --postfix - добавить эту строку каждого выходного адреса (доступны \t\r\n как управляющие последовательности) (По умолчанию "\n")
+
+### Пример
 
 ```bat
-./build/cidrips -iips.txt -osubnets.txt -mcount --count=1  --overwrite --prefix="add route " --postfix="\n"
+cidrips.exe -iips.txt -osubnets.txt -mlevel --level=0
 ```
+
 ```
-#  ips.txt
-66.22.216.10, 66.22.216.11, 66.22.216.12, 66.22.216.122, 66.22.216.124, 66.22.216.125, 66.22.216.126, 66.22.216.128, 66.22.216.129, 66.22.216.13, 66.22.216.130, 66.22.216.131, 66.22.216.132, 66.22.216.139, 66.22.216.14, 66.22.216.141, 66.22.216.142, 66.22.216.143, 66.22.216.144
+# ips.txt
+127.0.0.1
+127.0.0.2
+127.0.0.3
+127.0.0.4
 ```
+
 ```
 # subnets.txt
-add route 66.22.216.0/24
+127.0.0.1
+127.0.0.2/31
+127.0.0.4
 ```
 
-### Arguments:
-
 ```
-cidrips v0.2.0.rev9065823
-Utlity for compress any IP list groupping by CIDR mask.
-
-Usage:
-        cidrips -i[FILE]
-        cidrips -i[FILE] -o[FILE]
-        cidrips -mlevel [-l[level]] -i[FILE] -o[FILE]
-        cidrips -mcount [-c[count]] -i[FILE] -o[FILE]
-        cidrips -i[FILE] -p[PREFIX] -P[POSTFIX]
-
-Arguments:
-        -i,--input    [FILE]           Path to file with input ips. (Use 
-                                       --input - for stdin)
-        -o,--out      [FILE]           Path to file with output subnets. (Use 
-                                       --input - for stdin)
-        -m,--mode     [level|count]    Use this method for generate 
-                                       subnets: level >=0, count - maximum count
-                                       of result subnets.
-                                       [Default: level]
-        -l,--level    [LEVEL]          Comression level.  [Default: 0]
-        -c,--count    [COUNT]          Maxmimum count of result subnets.
-                                       [Default: not specifie]
-        -p,--prefix   [prefix]         Prefix for generated subnet in output.
-                                       [Default: ""]
-        -P,--postfix  [postfix]        Postfix for generated subnet in output.
-                                       [Default: "\n"
-        -O, --overwrite                Overwrite output file if not empty
-        -A, --append                   Append into output file.
-        -C, --cancel                   Cancel if output file is not empty.
-            --no-stats                 No print any statistics
+# stats
+coverage=4, source=4, falsely_covered=0.000000%; result=3, compress=25.000000%
 ```
 
-### Build
-windows
+### Сборка
 
 ```bat
-clang cidrips.c -ocidrips.exe
+cmake -DCMAKE_BUILD_TYPE=Release -S . -B build
+cmake --build build
 ```
