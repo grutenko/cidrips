@@ -59,6 +59,14 @@ cidrips.exe -iips.txt -osubnets.txt -mlevel --level=0
 coverage=4, source=4, falsely_covered=0.000000%; result=3, compress=25.000000%
 ```
 
+### Загрузка
+
+windows, linux, macos (x86_64) 
+
+с.м. [Релизы](https://github.com/grutenko/cidrips/releases/latest)
+
+ARM только сборка из исходников
+
 ### Сборка
 
 ```bat
