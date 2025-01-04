@@ -1,6 +1,6 @@
 ## cidrips
 
-[![en](https://img.shields.io/badge/lang-en-red.svg)](ttps://github.com/grutenko/cidrips/blob/master/README.en.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/grutenko/cidrips/blob/master/README.en.md)
 [![ru](https://img.shields.io/badge/lang-ru-green.svg)](https://github.com/grutenko/cidrips/blob/master/README.md)
 
 _Утилита сжатия списка IP адресов с исползованием группировки по CIDR маске_
